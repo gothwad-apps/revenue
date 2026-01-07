@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Revenue Terminal | Gothwad Apps Ltd</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <!-- Professional Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- HIGH-END FINTECH THEME --- */
+        :root {
+            --bg: #000000;
+            --panel: #0a0a0a;
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #6366f1; /* Indigo */
+            --accent: #8b5cf6; /* Violet */
+            --gold: #fbbf24;    /* Money Gold */
+            --success: #10b981; /* Profit Green */
+            --text-main: #ffffff;
+            --text-dim: #6b7280;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* subtle grid background */
+        .bg-matrix {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: -1;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px; opacity: 0.5;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            padding: 15px 30px; border-bottom: 1px solid var(--border); background: rgba(5,5,5,0.8);
+            display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(10px);
+        }
+        .brand { font-weight: 800; font-size: 1.1rem; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+        .live-indicator {
+            display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--success); 
+            background: rgba(16, 185, 129, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: pulse 1.5s infinite; }
+        
+        /* --- MAIN CONTENT CENTERED --- */
+        .dashboard-wrapper {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 20px; position: relative;
+        }
+
+        /* MAIN REVENUE CARD */
+        .revenue-hero {
+            text-align: center; position: relative; z-index: 2;
+            margin-bottom: 40px;
+        }
+        .label { font-size: 0.9rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; }
+        
+        /* THE BIG NUMBER */
+        .big-money {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 5rem; font-weight: 700;
+            background: linear-gradient(135deg, #fff 30%, #fbbf24 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -2px; line-height: 1;
+            filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.2));
+            transition: 0.2s;
+        }
+        
+        .sub-money {
+            font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; color: var(--text-dim); margin-top: 10px;
+        }
+
+        /* STATS ROW */
+        .stats-row {
+            display: flex; gap: 30px; margin-top: 40px; flex-wrap: wrap; justify-content: center;
+        }
+        .stat-item {
+            background: var(--panel); border: 1px solid var(--border); padding: 15px 25px; border-radius: 12px;
+            text-align: center; min-width: 180px; transition: 0.3s;
+        }
+        .stat-item:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; color: white; display: block; }
+        .stat-lbl { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; display: block; }
+        .stat-inc { font-size: 0.75rem; color: var(--success); margin-top: 5px; display: block; }
+
+        /* --- TICKER FOOTER (SCROLLING BAR) --- */
+        .ticker-wrap {
+            position: fixed; bottom: 0; width: 100%; background: #050505; border-top: 1px solid var(--border);
+            overflow: hidden; height: 40px; display: flex; align-items: center; white-space: nowrap;
+        }
+        .ticker { display: inline-block; animation: scroll 20s linear infinite; padding-left: 100%; }
+        .ticker-item { display: inline-block; padding: 0 30px; color: var(--text-dim); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; }
+        .ticker-item span { color: var(--success); font-weight: 700; }
+        
+        /* Back Button */
+        .back-btn {
+            position: absolute; top: 20px; left: 20px; text-decoration: none; color: var(--text-dim); 
+            display: flex; align-items: center; gap: 5px; font-size: 0.9rem; transition: 0.3s;
+        }
+        .back-btn:hover { color: white; }
+
+        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { opacity: 0.5; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        @keyframes scroll { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        @media (max-width: 768px) {
+            .big-money { font-size: 3.5rem; }
+            .stats-row { gap: 15px; }
+            .stat-item { min-width: 45%; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="bg-matrix"></div>
+
+    <!-- Nav -->
+    <nav>
+        <div class="brand"><i class="fas fa-layer-group" style="color:var(--primary)"></i> GothwadApps Ltd.</div>
+        <div class="live-indicator"><div class="dot"></div> SYSTEMS ONLINE</div>
+    </nav>
+
+    <!-- Content -->
+    <div class="dashboard-wrapper">
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Home</a>
+
+        <div class="revenue-hero">
+            <div class="label">NET LIFETIME REVENUE</div>
+            <!-- Main Numbers -->
+            <div class="big-money" id="inrValue">₹60,240.00</div>
+            <div class="sub-money" id="usdValue">$712.90</div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-item">
+                <span class="stat-val" id="todayVal">+₹0.00</span>
+                <span class="stat-lbl">Today's Profit</span>
+                <span class="stat-inc"><i class="fas fa-arrow-up"></i> Live</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val" id="monthVal">₹62,450</span>
+                <span class="stat-lbl">Proj. Monthly</span>
+                <span class="stat-inc">+12% Growth</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">84.50</span>
+                <span class="stat-lbl">USD/INR Rate</span>
+                <span class="stat-inc">Updated 1m ago</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrolling Transaction Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">New Order: <span>+₹4,500</span> (Web Dev Package)</div>
+            <div class="ticker-item">Client Payment: <span>+$120.00</span> (USA)</div>
+            <div class="ticker-item">Subscription Renewed: <span>+₹999</span> (Basic Plan)</div>
+            <div class="ticker-item">Consultation Fee: <span>+₹2,500</span> (Startup Plan)</div>
+            <div class="ticker-item">App Purchase: <span>+₹120</span> (Play Store)</div>
+            <div class="ticker-item">Ad Revenue: <span>+$12.50</span> (AdMob)</div>
+            <div class="ticker-item">Maintenance Service: <span>+₹5,000</span> (Annual)</div>
+        </div>
+    </div>
+
+    <script>
+        // --- SMART REVENUE ENGINE ---
+        
+        // 1. SETTINGS (Modify these to tweak the logic)
+        const START_BASE = 60239.00; // Starting point (Approx 60k)
+        const DAILY_GROWTH = 1150.00; // How much it grows per day (Approx 1k)
+        const START_DATE = new Date("2026-01-01T00:00:00").getTime(); // Fixed start date
+        
+        // 2. FORMATTERS
+        const fmtINR = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 });
+        const fmtUSD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+
+        function updateRevenue() {
+            const now = new Date().getTime();
+            
+            // Calculate Days Passed since Start Date
+            // 86400000 is milliseconds in a day
+            const msPassed = now - START_DATE;
+            const daysPassed = msPassed / 86400000;
+            
+            // MAIN LOGIC: Base + (Days * DailyGrowth) + Tiny Live Noise
+            // "noise" adds cents based on current seconds so it changes when you look at it
+            const noise = (Date.now() % 10000) / 100; 
+            
+            let currentTotal = START_BASE + (daysPassed * DAILY_GROWTH);
+            
+            // Add noise to make it look "Live"
+            currentTotal += noise;
+
+            // Calculate Today's Portion (Just for display effect)
+            // We pretend we earned a portion of the daily growth based on current time of day
+            const todayProgress = (new Date().getHours() / 24);
+            const todayEarnings = DAILY_GROWTH * todayProgress + (Math.random()*50);
+
+            // Conversion
+            const usdTotal = currentTotal / 84.50;
+
+            // UPDATE DOM
+            document.getElementById('inrValue').innerText = fmtINR.format(currentTotal);
+            document.getElementById('usdValue').innerText = fmtUSD.format(usdTotal);
+            document.getElementById('todayVal').innerText = "+" + fmtINR.format(todayEarnings);
+        }
+
+        // 3. ANIMATION LOOP
+        // Updates every 2 seconds to show cents changing
+        setInterval(updateRevenue, 2000);
+        
+        // Initial Call
+        updateRevenue();
+
+    </script>
+</body>
+</html>
